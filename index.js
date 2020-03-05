@@ -49,10 +49,7 @@ async function solve(page, key, useOldModel) {
         //TODO check if it gives us a mean error
         const audioLinkSelector = '.rc-audiochallenge-tdownload-link';
         await imageFrame.waitForSelector(audioLinkSelector);
-        /*const audioLink = await imageFrame.evaluate(() => {
-      return document.querySelector('.rc-audiochallenge-tdownload-link').href
-    })
-    */
+
         const audioLink = await (await (await imageFrame.$(audioLinkSelector)).getProperty('href')).jsonValue();
 
         const audioBytes = await imageFrame.evaluate(audioLink => {
@@ -65,18 +62,6 @@ async function solve(page, key, useOldModel) {
         const response = await axios({ ...apiOptions,
             data: new Uint8Array(audioBytes).buffer,
         });
-        /*
-        const response = await axios({
-      httsAgent,
-      method: 'post',
-      url: 'https://api.wit.ai/speech?v=20170307',
-      data: new Uint8Array(audioBytes).buffer,
-      headers: {
-        Authorization: 'Bearer JVHWCNWJLWLGN6MFALYLHAPKUFHMNTAC',
-        'Content-Type': 'audio/mpeg3'
-      }
-    })
-            */
 
         const audioTranscript = response.data._text.trim();
         const input = await imageFrame.$('#audio-response');
